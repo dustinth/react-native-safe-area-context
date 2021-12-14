@@ -1,6 +1,6 @@
 {
   "name": "react-native-safe-area-context",
-  "version": "3.3.2",
+  "version": "3.3.102",
   "description": "A flexible way to handle safe area, also works on Android and web.",
   "main": "lib/commonjs/index.js",
   "module": "lib/module/index.js",
@@ -45,8 +45,8 @@
     "view"
   ],
   "peerDependencies": {
-    "react": "*",
-    "react-native": "*"
+    "react": "17.0.1",
+    "react-native": "0.64.2"
   },
   "dependencies": {},
   "devDependencies": {

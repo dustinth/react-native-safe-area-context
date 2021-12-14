@@ -20,11 +20,11 @@ buildscript {
 apply plugin: 'com.android.library'
 
 android {
-  compileSdkVersion getExtOrDefault('compileSdkVersion', 28)
+  compileSdkVersion getExtOrDefault('compileSdkVersion', 30)
 
   defaultConfig {
-    minSdkVersion getExtOrDefault('minSdkVersion', 16)
-    targetSdkVersion getExtOrDefault('targetSdkVersion', 28)
+    minSdkVersion getExtOrDefault('minSdkVersion', 21)
+    targetSdkVersion getExtOrDefault('targetSdkVersion', 30)
   }
   lintOptions{
     abortOnError false
