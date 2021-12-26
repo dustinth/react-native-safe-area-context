@@ -175,7 +175,8 @@ import java.lang.reflect.Method;
             }
             int bottom = Math.min(insets.getSystemWindowInsetBottom(), insets.getStableInsetBottom());
             if(bottom <=0 && NavigationUtils.isAllScreenDevice(rootView.getContext())) {
-                bottom = top;
+                // 适当的加入一点bottom, 避免太沉底不好看
+                bottom = top/2;
             }
             return new EdgeInsets(
                     top,
