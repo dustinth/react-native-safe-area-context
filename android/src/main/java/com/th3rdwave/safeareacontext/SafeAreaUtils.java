@@ -196,14 +196,14 @@ import java.lang.reflect.Method;
             if (insets == null) {
                 return null;
             }
-            int top = insets.getSystemWindowInsetTop();
+            float top = insets.getSystemWindowInsetTop();
             if (top <= 0) {
                 top = getNotchHeight(rootView);
             }
-            int bottom = Math.min(insets.getSystemWindowInsetBottom(), insets.getStableInsetBottom());
+            float bottom = Math.min(insets.getSystemWindowInsetBottom(), insets.getStableInsetBottom());
             if (bottom <= 0 && NavigationUtils.isAllScreenDevice(rootView.getContext())) {
                 // 适当的加入一点bottom, 避免太沉底不好看
-                bottom = top / 2;
+                bottom = (float) ((top + 0.0) / 2);
                 if (isXiaoMiNavigationBarShow(context)) {
                     int xiaomiBottom = getNavigationHeight(context);
                     bottom = xiaomiBottom > 0 ? xiaomiBottom : bottom;
@@ -222,14 +222,14 @@ import java.lang.reflect.Method;
         } else {
             Rect visibleRect = new Rect();
             rootView.getWindowVisibleDisplayFrame(visibleRect);
-            int top = visibleRect.top;
+            float top = visibleRect.top;
             if (top <= 0) {
                 top = getNotchHeight(rootView);
             }
-            int bottom = rootView.getHeight() - visibleRect.bottom;
+            float bottom = rootView.getHeight() - visibleRect.bottom;
             if (bottom <= 0 && NavigationUtils.isAllScreenDevice(rootView.getContext())) {
                 // 适当的加入一点bottom, 避免太沉底不好看
-                bottom = top / 2;
+                bottom = (float) ((top + 0.0) / 2);
                 if (isXiaoMiNavigationBarShow(context)) {
                     int xiaomiBottom = getNavigationHeight(context);
                     bottom = xiaomiBottom > 0 ? xiaomiBottom : bottom;
