@@ -1,8 +1,10 @@
 package com.th3rdwave.safeareacontext;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Rect;
 import android.os.Build;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.DisplayCutout;
 import android.view.View;
@@ -162,8 +164,33 @@ import java.lang.reflect.Method;
         return 0;
     }
 
+    private static int getNavigationHeight(Context context) {
+        if (context == null) {
+            return 0;
+        }
+        Resources resources = context.getResources();
+        int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
+        int height = 0;
+        if (resourceId > 0) {
+            //获取NavigationBar的高度
+            height = resources.getDimensionPixelSize(resourceId);
+        }
+        return height;
+    }
+
+    private static boolean isXiaoMiNavigationBarShow(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            if (Settings.Global.getInt(context.getContentResolver(), "force_fsg_nav_bar", 0) != 0) {
+                //开启手势，不显示虚拟键
+                return false;
+            }
+        }
+        return true;
+    }
+
     private static @Nullable
     EdgeInsets getRootWindowInsetsCompat(View rootView) {
+        Context context = rootView.getContext();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             WindowInsets insets = rootView.getRootWindowInsets();
             if (insets == null) {
@@ -174,9 +201,13 @@ import java.lang.reflect.Method;
                 top = getNotchHeight(rootView);
             }
             int bottom = Math.min(insets.getSystemWindowInsetBottom(), insets.getStableInsetBottom());
-            if(bottom <=0 && NavigationUtils.isAllScreenDevice(rootView.getContext())) {
+            if (bottom <= 0 && NavigationUtils.isAllScreenDevice(rootView.getContext())) {
                 // 适当的加入一点bottom, 避免太沉底不好看
-                bottom = top/2;
+                bottom = top / 2;
+                if (isXiaoMiNavigationBarShow(context)) {
+                    int xiaomiBottom = getNavigationHeight(context);
+                    bottom = xiaomiBottom > 0 ? xiaomiBottom : bottom;
+                }
             }
             return new EdgeInsets(
                     top,
@@ -196,8 +227,13 @@ import java.lang.reflect.Method;
                 top = getNotchHeight(rootView);
             }
             int bottom = rootView.getHeight() - visibleRect.bottom;
-            if(bottom <=0 && NavigationUtils.isAllScreenDevice(rootView.getContext())) {
-                bottom = top;
+            if (bottom <= 0 && NavigationUtils.isAllScreenDevice(rootView.getContext())) {
+                // 适当的加入一点bottom, 避免太沉底不好看
+                bottom = top / 2;
+                if (isXiaoMiNavigationBarShow(context)) {
+                    int xiaomiBottom = getNavigationHeight(context);
+                    bottom = xiaomiBottom > 0 ? xiaomiBottom : bottom;
+                }
             }
             return new EdgeInsets(
                     top,
