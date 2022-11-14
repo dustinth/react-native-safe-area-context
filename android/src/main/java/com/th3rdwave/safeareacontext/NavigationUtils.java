@@ -42,7 +42,7 @@ public class NavigationUtils {
         }
       }
       return mIsAllScreenDevice;
-    } catch (Exception e) {
+    } catch (Throwable e) {
       return false;
     }
   }
