@@ -1,16 +1,20 @@
 package com.th3rdwave.safeareacontext;
 
+import android.app.Service;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Rect;
 import android.os.Build;
 import android.provider.Settings;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.DisplayCutout;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowInsets;
+import android.view.WindowManager;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -207,10 +211,41 @@ import java.lang.reflect.Method;
       if ("navigation_gesture_on".equals(checkSettingName) || "hide_navigationbar_enable".equals(checkSettingName)) {
         navigationBarIsMin = Settings.Secure.getInt(context.getContentResolver(), checkSettingName, 0);
       } else {
-        navigationBarIsMin = Settings.Global.getInt(context.getContentResolver(), checkSettingName, 0);
+        return isHasNavigationBar(context);
       }
     }
     return navigationBarIsMin == 0;
+  }
+
+  private static boolean isHasNavigationBar(Context context) {
+    WindowManager windowManager = (WindowManager) context.getSystemService(Service.WINDOW_SERVICE);
+    Display d = windowManager.getDefaultDisplay();
+
+    DisplayMetrics realDisplayMetrics = new DisplayMetrics();
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+      d.getRealMetrics(realDisplayMetrics);
+    }
+    int realHeight = realDisplayMetrics.heightPixels;
+    int realWidth = realDisplayMetrics.widthPixels;
+
+    DisplayMetrics displayMetrics = new DisplayMetrics();
+    d.getMetrics(displayMetrics);
+    int displayHeight = displayMetrics.heightPixels;
+    int displayWidth = displayMetrics.widthPixels;
+
+    // 部分无良厂商的手势操作，显示高度 + 导航栏高度，竟然大于物理高度，对于这种情况，直接默认未启用导航栏
+    if (displayHeight + getNavigationBarHeight(context) > realHeight) return false;
+
+    return realWidth - displayWidth > 0 || realHeight - displayHeight > 0;
+  }
+
+  private static int getNavigationBarHeight(Context context) {
+    int result = 0;
+    Resources resources = context.getResources();
+    int resourceId =
+      resources.getIdentifier("navigation_bar_height", "dimen", "android");
+    if (resourceId > 0) result = resources.getDimensionPixelSize(resourceId);
+    return result;
   }
 
   private static @Nullable
