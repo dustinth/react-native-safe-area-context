@@ -211,7 +211,11 @@ import java.lang.reflect.Method;
       if ("navigation_gesture_on".equals(checkSettingName) || "hide_navigationbar_enable".equals(checkSettingName)) {
         navigationBarIsMin = Settings.Secure.getInt(context.getContentResolver(), checkSettingName, 0);
       } else {
-        return isHasNavigationBar(context);
+        try {
+          return isHasNavigationBar(context);
+        } catch (Throwable e) {
+          return false;
+        }
       }
     }
     return navigationBarIsMin == 0;
