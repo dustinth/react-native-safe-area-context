@@ -183,7 +183,7 @@ import java.lang.reflect.Method;
   }
 
   // 这里只判断NavigationBar高度为0时, 再次确认是否开启了手势导航或者隐藏了导航栏;
-  private static boolean isSoftNavigationBarShow(Context context) {
+  private static boolean isSoftNavigationBarShow(Context context, float topStatusBarHeight) {
     String checkSettingName = "navigationbar_is_min";
     String brand = Build.BRAND;
     if (brand == null || brand.equals("")) {
@@ -212,7 +212,7 @@ import java.lang.reflect.Method;
         navigationBarIsMin = Settings.Secure.getInt(context.getContentResolver(), checkSettingName, 0);
       } else {
         try {
-          return isHasNavigationBar(context);
+          return isHasNavigationBar(context, topStatusBarHeight);
         } catch (Throwable e) {
           return false;
         }
@@ -221,7 +221,7 @@ import java.lang.reflect.Method;
     return navigationBarIsMin == 0;
   }
 
-  private static boolean isHasNavigationBar(Context context) {
+  private static boolean isHasNavigationBar(Context context, float topStatusBarHeight) {
     WindowManager windowManager = (WindowManager) context.getSystemService(Service.WINDOW_SERVICE);
     Display d = windowManager.getDefaultDisplay();
 
@@ -240,7 +240,7 @@ import java.lang.reflect.Method;
     // 部分无良厂商的手势操作，显示高度 + 导航栏高度，竟然大于物理高度，对于这种情况，直接默认未启用导航栏
     if (displayHeight + getNavigationBarHeight(context) > realHeight) return false;
 
-    return realWidth - displayWidth > 0 || realHeight - displayHeight > 0;
+    return realWidth - displayWidth > 0 || (realHeight - displayHeight > 0 && Math.abs(realHeight - displayHeight - topStatusBarHeight) > 0.01);
   }
 
   private static int getNavigationBarHeight(Context context) {
@@ -268,7 +268,7 @@ import java.lang.reflect.Method;
       if (bottom <= 0 && NavigationUtils.isAllScreenDevice(rootView.getContext())) {
         // 适当的加入一点bottom, 避免太沉底不好看
         bottom = (float) ((top + 0.0) / 2);
-        if (isSoftNavigationBarShow(context)) {
+        if (isSoftNavigationBarShow(context, top)) {
           int softNavigationBarBottom = getNavigationHeight(context);
           bottom = softNavigationBarBottom > 0 ? softNavigationBarBottom : bottom;
         }
@@ -294,7 +294,7 @@ import java.lang.reflect.Method;
       if (bottom <= 0 && NavigationUtils.isAllScreenDevice(rootView.getContext())) {
         // 适当的加入一点bottom, 避免太沉底不好看
         bottom = (float) ((top + 0.0) / 2);
-        if (isSoftNavigationBarShow(context)) {
+        if (isSoftNavigationBarShow(context, top)) {
           int softNavigationBarBottom = getNavigationHeight(context);
           bottom = softNavigationBarBottom > 0 ? softNavigationBarBottom : bottom;
         }
