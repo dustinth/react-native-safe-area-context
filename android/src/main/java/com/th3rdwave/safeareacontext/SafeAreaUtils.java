@@ -266,8 +266,6 @@ import java.lang.reflect.Method;
       }
       float bottom = Math.min(insets.getSystemWindowInsetBottom(), insets.getStableInsetBottom());
       if (bottom <= 0 && NavigationUtils.isAllScreenDevice(rootView.getContext())) {
-        // 适当的加入一点bottom, 避免太沉底不好看
-        bottom = (float) ((top + 0.0) / 2);
         if (isSoftNavigationBarShow(context, top)) {
           int softNavigationBarBottom = getNavigationHeight(context);
           bottom = softNavigationBarBottom > 0 ? softNavigationBarBottom : bottom;
